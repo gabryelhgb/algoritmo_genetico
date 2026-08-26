@@ -1,0 +1,27 @@
+# Ambiente virtual Python
+backend/.venv/
+.venv/
+venv/
+
+# Arquivos temporários Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Next.js - uso futuro
+frontend/node_modules/
+frontend/.next/
+frontend/out/
