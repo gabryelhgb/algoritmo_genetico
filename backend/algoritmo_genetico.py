@@ -1,4 +1,5 @@
 import math
+import random
 
 TAMANHO_POPULACAO = 40
 QUANTIDADE_FILHOS = 20
@@ -13,6 +14,16 @@ VALOR_MAXIMO = 511
 
 def calcular_aptidao(x):
     return x * math.sin(x / 20) + 100
+
+def criar_populacao_inicial():
+    populacao = []
+
+    for _ in range(TAMANHO_POPULACAO):
+        valor_x = random.randint(VALOR_MINIMO, VALOR_MAXIMO)
+        cromossomo = format(valor_x, f"0{QUANTIDADE_BITS}b")
+        populacao.append(cromossomo)
+
+    return populacao
 
 def main():
     print()
@@ -30,6 +41,35 @@ def main():
     print("f(0) =", calcular_aptidao(0))
     print("f(20) =", calcular_aptidao(20))
     print("f(100) =", calcular_aptidao(100))
+
+    print()
+    populacao = criar_populacao_inicial()
+
+    print()
+    print("População inicial:")
+
+    for indice, cromossomo in enumerate(populacao):
+        valor_x = int(cromossomo, 2)
+        aptidao = calcular_aptidao(valor_x)
+
+        print(
+            indice,
+            "Cromossomo:", 
+            cromossomo,
+            "- x",
+            valor_x,
+            "- Aptidão:",
+            aptidao,
+        )
+
+    assert len(populacao) == TAMANHO_POPULACAO
+
+    for cromossomo in populacao:
+        assert len(cromossomo) == QUANTIDADE_BITS
+        assert set(cromossomo).issubset({"0", "1"})
+
+        valor_x = int(cromossomo, 2)
+        assert VALOR_MINIMO <= valor_x <= VALOR_MAXIMO
 
 if __name__ == "__main__":
     main()
