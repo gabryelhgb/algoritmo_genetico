@@ -37,6 +37,45 @@ def populacao_convergiu(populacao):
 
     return True
 
+def calcular_pesos_roleta(populacao):
+    aptidoes = []
+
+    for cromossomo in populacao:
+        valor_x = int(cromossomo, 2)
+        aptidao = calcular_aptidao(valor_x)
+        aptidoes.append(aptidao)
+
+    menor_aptidao = aptidoes[0]
+
+    for aptidao in aptidoes:
+        if aptidao < menor_aptidao:
+            menor_aptidao = aptidao
+
+    pesos = []
+
+    for aptidao in aptidoes:
+        peso = aptidao - menor_aptidao + 1
+        pesos.append(peso)
+
+    return pesos
+
+def selecionar_pai_por_roleta(populacao, pesos):
+    peso_total = 0
+
+    for peso in pesos:
+        peso_total += peso
+
+    ponto_sorteado = random.random() * peso_total
+    peso_acumulado = 0
+
+    for indice in range(len(populacao)):
+        peso_acumulado += pesos[indice]
+
+        if peso_acumulado >= ponto_sorteado:
+            return populacao[indice]
+
+    return populacao[-1]
+
 def main():
     print()
     print("Algoritmo genético iniciado!")
@@ -100,6 +139,35 @@ def main():
     print()
     print("População inicial convergiu:", populacao_convergiu(populacao))
     print("Testes de convergência concluídos com sucesso!")
+
+    pesos = calcular_pesos_roleta(populacao)
+
+    assert len(pesos) == len(populacao)
+
+    for peso in pesos:
+        assert peso > 0
+
+    print()
+    print("Teste de seleção por roleta:")
+
+    for numero_selecao in range(10):
+        pai_selecionado = selecionar_pai_por_roleta(populacao, pesos)
+
+        assert pai_selecionado in populacao
+
+        valor_x = int(pai_selecionado, 2)
+        aptidao = calcular_aptidao(valor_x)
+
+        print(
+            "Seleção",
+            numero_selecao + 1,
+            "- Pai:",
+            pai_selecionado,
+            "- x:",
+            valor_x,
+            "- Aptidão:",
+            aptidao,
+        )
 
 if __name__ == "__main__":
     main()
