@@ -12,8 +12,12 @@ TAXA_MUTACAO = 0.03
 VALOR_MINIMO = 0
 VALOR_MAXIMO = 511
 
+
+
 def calcular_aptidao(x):
     return x * math.sin(x / 20) + 100
+
+
 
 def criar_populacao_inicial():
     populacao = []
@@ -24,6 +28,8 @@ def criar_populacao_inicial():
         populacao.append(cromossomo)
 
     return populacao
+
+
 
 def populacao_convergiu(populacao):
     if len(populacao) == 0:
@@ -36,6 +42,8 @@ def populacao_convergiu(populacao):
             return False
 
     return True
+
+
 
 def calcular_pesos_roleta(populacao):
     aptidoes = []
@@ -59,6 +67,8 @@ def calcular_pesos_roleta(populacao):
 
     return pesos
 
+
+
 def selecionar_pai_por_roleta(populacao, pesos):
     peso_total = 0
 
@@ -75,6 +85,33 @@ def selecionar_pai_por_roleta(populacao, pesos):
             return populacao[indice]
 
     return populacao[-1]
+
+
+
+def cruzar(pai, mae):
+    primeira_parte = pai[:PONTO_CORTE]
+    segunda_parte = mae[PONTO_CORTE:]
+
+    filho = primeira_parte + segunda_parte
+
+    return filho
+
+
+
+def gerar_filhos(populacao):
+    pesos = calcular_pesos_roleta(populacao)
+    filhos = []
+
+    for _ in range(QUANTIDADE_FILHOS):
+        pai = selecionar_pai_por_roleta(populacao, pesos)
+        mae = selecionar_pai_por_roleta(populacao, pesos)
+
+        filho = cruzar(pai, mae)
+        filhos.append(filho)
+
+    return filhos
+
+
 
 def main():
     print()
@@ -163,6 +200,45 @@ def main():
             numero_selecao + 1,
             "- Pai:",
             pai_selecionado,
+            "- x:",
+            valor_x,
+            "- Aptidão:",
+            aptidao,
+        )
+
+    print()
+    print("Teste de cruzamento:")
+
+    pai_teste = "101001101"
+    mae_teste = "001111000"
+
+    filho_teste = cruzar(pai_teste, mae_teste)
+
+    print("Pai: ", pai_teste)
+    print("Mãe: ", mae_teste)
+    print("Filho:", filho_teste)
+
+    assert filho_teste == "101011000"
+
+    filhos = gerar_filhos(populacao)
+
+    assert len(filhos) == QUANTIDADE_FILHOS
+
+    for filho in filhos:
+        assert len(filho) == QUANTIDADE_BITS
+        assert set(filho).issubset({"0", "1"})
+
+    print()
+    print("Filhos gerados:")
+
+    for indice, filho in enumerate(filhos):
+        valor_x = int(filho, 2)
+        aptidao = calcular_aptidao(valor_x)
+
+        print(
+            indice,
+            "- Cromossomo:",
+            filho,
             "- x:",
             valor_x,
             "- Aptidão:",
