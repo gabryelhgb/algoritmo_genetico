@@ -174,9 +174,9 @@ def ordenar_por_aptidao(individuos):
 
 
 def selecionar_sobreviventes(populacao, filhos_mutados):
-    cadidatos = populacao + filhos_mutados
+    candidatos = populacao + filhos_mutados
 
-    candidatos_ordenados = ordenar_por_aptidao(cadidatos)
+    candidatos_ordenados = ordenar_por_aptidao(candidatos)
 
     sobreviventes = []
 
@@ -185,6 +185,44 @@ def selecionar_sobreviventes(populacao, filhos_mutados):
 
     return sobreviventes
 
+
+
+def executar_algoritmo_genetico():
+    populacao = criar_populacao_inicial()
+    populacao_inicial = populacao.copy()
+
+    quantidade_geracoes = 0
+
+    while (
+        quantidade_geracoes < MAXIMO_GERACOES
+        and not populacao_convergiu(populacao)
+    ):
+        filhos = gerar_filhos(populacao)
+
+        filhos_mutados = aplicar_mutacao_nos_filhos(filhos)
+
+        populacao = selecionar_sobreviventes(populacao, filhos_mutados)
+
+        quantidade_geracoes += 1
+
+    populacao_final = ordenar_por_aptidao(populacao)
+    melhor_cromossomo = populacao_final[0]
+
+    melhor_x = int(melhor_cromossomo, 2)
+    melhor_aptidao = calcular_aptidao(melhor_x)
+
+    resultado = {
+        "geracoes": quantidade_geracoes,
+        "melhor_individuo": melhor_cromossomo,
+        "x": melhor_x,
+        "aptidao": melhor_aptidao,
+        "cromossomo_binario": melhor_cromossomo,
+        "populacao_inicial": populacao_inicial,
+        "populacao_final": populacao_final,
+        "convergiu": populacao_convergiu(populacao_final),
+    }
+
+    return resultado
 
 
 
@@ -395,6 +433,26 @@ def main():
             "- Aptidão:",
             aptidao
         )
+
+    print()
+    print("Executando algoritmo genético completo...")
+
+    resultado = executar_algoritmo_genetico()
+
+    print()
+    print("Resultado final:")
+    print("Gerações executadas:", resultado["geracoes"])
+    print("Melhor indivíduo:", resultado["melhor_individuo"])
+    print("Valor de x:", resultado["x"])
+    print("Valor de f(x):", resultado["aptidao"])
+    print("Cromossomo:", resultado["cromossomo_binario"])
+    print("Convergiu:", resultado["convergiu"])
+
+    assert resultado["geracoes"] <= MAXIMO_GERACOES
+    assert len(resultado["populacao_inicial"]) == TAMANHO_POPULACAO
+    assert len(resultado["populacao_final"]) == TAMANHO_POPULACAO
+    assert len(resultado["cromossomo_binario"]) == QUANTIDADE_BITS
+    assert VALOR_MINIMO <= resultado["x"] <= VALOR_MAXIMO
 
 
 
