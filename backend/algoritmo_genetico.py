@@ -113,6 +113,34 @@ def gerar_filhos(populacao):
 
 
 
+def aplicar_mutacao(cromossomo, taxa_mutacao=TAXA_MUTACAO):
+    bits = list(cromossomo)
+
+    for indice in range(len(bits)):
+        numero_sorteado = random.random()
+
+        if numero_sorteado < taxa_mutacao:
+            if bits[indice] == "0":
+                bits[indice] = "1"
+            else:
+                bits[indice] = "0"
+
+    cromossomo_mutado = "".join(bits)
+
+    return cromossomo_mutado
+
+
+def aplicar_mutacao_nos_filhos(filhos):
+    filhos_mutados = []
+
+    for filho in filhos:
+        filho_mutado = aplicar_mutacao(filho)
+        filhos_mutados.append(filho_mutado)
+
+    return filhos_mutados
+
+
+
 def main():
     print()
     print("Algoritmo genético iniciado!")
@@ -243,6 +271,47 @@ def main():
             valor_x,
             "- Aptidão:",
             aptidao,
+        )
+
+    cromossomo_teste = "101001101"
+
+    sem_mutacao = aplicar_mutacao(
+        cromossomo_teste, 
+        taxa_mutacao=0
+    )
+
+    mutacao_total = aplicar_mutacao(
+        cromossomo_teste, 
+        taxa_mutacao=1
+    )
+
+    assert sem_mutacao == "101001101"
+    assert mutacao_total == "010110010"
+
+    print()
+    print("Teste controlado de mutação:")
+    print("Original: ", cromossomo_teste)
+    print("Taxa 0%: ", sem_mutacao)
+    print("Taxa 100%: ", mutacao_total)
+
+    filhos_mutados = aplicar_mutacao_nos_filhos(filhos)
+
+    assert len(filhos_mutados) == QUANTIDADE_FILHOS
+
+    for filho in filhos_mutados:
+        assert len(filho) == QUANTIDADE_BITS
+        assert set(filho).issubset({"0", "1"})
+
+    print()
+    print("Filhos após mutação:")
+
+    for indice in range(len(filhos)):
+        print(
+            indice,
+            "- Antes:",
+            filhos[indice],
+            "- Depois:",
+            filhos_mutados[indice]
         )
 
 if __name__ == "__main__":
