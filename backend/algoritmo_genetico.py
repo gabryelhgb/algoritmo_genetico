@@ -25,6 +25,18 @@ def criar_populacao_inicial():
 
     return populacao
 
+def populacao_convergiu(populacao):
+    if len(populacao) == 0:
+        return False
+
+    primeiro_cromossomo = populacao[0]
+
+    for cromossomo in populacao:
+        if cromossomo != primeiro_cromossomo:
+            return False
+
+    return True
+
 def main():
     print()
     print("Algoritmo genético iniciado!")
@@ -42,7 +54,6 @@ def main():
     print("f(20) =", calcular_aptidao(20))
     print("f(100) =", calcular_aptidao(100))
 
-    print()
     populacao = criar_populacao_inicial()
 
     print()
@@ -70,6 +81,25 @@ def main():
 
         valor_x = int(cromossomo, 2)
         assert VALOR_MINIMO <= valor_x <= VALOR_MAXIMO
+
+    populacao_igual = [
+        "111111111",
+        "111111111",
+        "111111111",
+    ]
+
+    populacao_diferente = [
+        "111111111",
+        "000000000",
+        "101010101",
+    ]
+
+    assert populacao_convergiu(populacao_igual)
+    assert not populacao_convergiu(populacao_diferente)
+
+    print()
+    print("População inicial convergiu:", populacao_convergiu(populacao))
+    print("Testes de convergência concluídos com sucesso!")
 
 if __name__ == "__main__":
     main()
