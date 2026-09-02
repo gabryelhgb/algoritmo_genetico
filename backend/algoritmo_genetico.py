@@ -141,6 +141,53 @@ def aplicar_mutacao_nos_filhos(filhos):
 
 
 
+def ordenar_por_aptidao(individuos):
+    individuos_ordenados = individuos.copy()
+    quantidade = len(individuos_ordenados)
+
+    for posicao_atual in range(quantidade - 1):
+        indice_melhor = posicao_atual
+
+        for indice in range(posicao_atual + 1, quantidade):
+            cromossomo_atual = individuos_ordenados[indice]
+            cromossomo_melhor = individuos_ordenados[indice_melhor]
+
+            x_atual = int(cromossomo_atual, 2)
+            x_melhor = int(cromossomo_melhor, 2)
+
+            aptidao_atual = calcular_aptidao(x_atual)
+            aptidao_melhor = calcular_aptidao(x_melhor)
+
+            if aptidao_atual > aptidao_melhor:
+                indice_melhor = indice
+
+        temporario = individuos_ordenados[posicao_atual]
+
+        individuos_ordenados[posicao_atual] = (
+            individuos_ordenados[indice_melhor]
+        )
+
+        individuos_ordenados[indice_melhor] = temporario
+
+    return individuos_ordenados
+
+
+
+def selecionar_sobreviventes(populacao, filhos_mutados):
+    cadidatos = populacao + filhos_mutados
+
+    candidatos_ordenados = ordenar_por_aptidao(cadidatos)
+
+    sobreviventes = []
+
+    for indice in range(TAMANHO_POPULACAO):
+        sobreviventes.append(candidatos_ordenados[indice])
+
+    return sobreviventes
+
+
+
+
 def main():
     print()
     print("Algoritmo genético iniciado!")
@@ -313,6 +360,43 @@ def main():
             "- Depois:",
             filhos_mutados[indice]
         )
+
+    candidatos = populacao + filhos_mutados
+    nova_populacao = selecionar_sobreviventes(
+        populacao,
+        filhos_mutados
+    )
+
+    assert len(candidatos) == 60
+    assert len(nova_populacao) == TAMANHO_POPULACAO
+
+    for indice in range(len(nova_populacao) - 1):
+        x_atual = int(nova_populacao[indice], 2)
+        x_seguinte = int(nova_populacao[indice + 1], 2)
+
+        aptidao_atual = calcular_aptidao(x_atual)
+        aptidao_seguinte = calcular_aptidao(x_seguinte)
+
+        assert aptidao_atual >= aptidao_seguinte
+
+    print()
+    print("Nova população com os 40 sobreviventes:")
+
+    for indice, cromossomo in enumerate(nova_populacao):
+        valor_x = int(cromossomo, 2)
+        aptidao = calcular_aptidao(valor_x)
+
+        print(
+            indice,
+            "- Cromossomo:",
+            cromossomo,
+            "- x:",
+            valor_x,
+            "- Aptidão:",
+            aptidao
+        )
+
+
 
 if __name__ == "__main__":
     main()
